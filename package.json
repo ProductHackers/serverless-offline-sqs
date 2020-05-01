@@ -4,7 +4,8 @@
   "description": "Serverless plugin to develop locally SQS events with serverless-offline",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint **/*.js"
+    "lint": "eslint **/*.js",
+    "test": "jest"
   },
   "keywords": [
     "serverless",

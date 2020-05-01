@@ -16,6 +16,10 @@ class ServerlessOfflineSQS {
     this.streams = [];
   }
 
+  getCustomConfig() {
+    return this.service.custom['serverless-offline-sqs'];
+  }
+
   getSqsClientConfig() {
     const config = this.getCustomConfig();
     return {
@@ -23,10 +27,6 @@ class ServerlessOfflineSQS {
       endpoint: config.endpoint,
       region: config.region,
     };
-  }
-
-  getCustomConfig() {
-    return this.service.custom['serverless-offline-sqs'];
   }
 
   getFunctions() {
