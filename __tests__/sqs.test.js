@@ -146,10 +146,47 @@ it('setSqsClient should return an instance of SQS', () => {
   expect(serverlessOffline.sqsClient).toBeInstanceOf(SQS);
 });
 
-it('getQueueUrl should return queue URL', () => {
+it('getQueueUrl should return queue URL', async () => {
   jest.mock('../index.js');
+  const expectedQueueUrl = 'http://0.0.0.0/queue/queue1';
   const serverlessOffline = new ServerlessOfflineSQS(serverless, {});
   const mockGetQueueUrl = jest.fn();
   ServerlessOfflineSQS.prototype.getQueueUrl = mockGetQueueUrl;
-  const url = serverlessOffline.getQueueUrl('a');
+  mockGetQueueUrl.mockReturnValue(Promise.resolve(expectedQueueUrl));
+  const url = await serverlessOffline.getQueueUrl('queue1');
+  expect(url).toEqual(expectedQueueUrl);
 });
+
+it('getFuncQueueParams should return queue params', () => {
+  const func = serverless.service.functions['test_sqs'];
+  const expectedParams = [
+    {
+      batchSize: func.batchSize || 10,
+      arn: func.events[0].sqs.arn,
+      queueName: 'queue1',
+      handlerPath: '/mock/functions/test/handler.test'
+    },
+    {
+      batchSize: func.batchSize || 10,
+      arn: func.events[1].sqs.arn,
+      queueName: 'queuewithoutresource',
+      handlerPath: '/mock/functions/test/handler.test'
+    }
+  ];
+  const serverlessOffline = new ServerlessOfflineSQS(serverless, {});
+  const params = serverlessOffline.getFuncQueueParams(func);
+  expect(params).toEqual(expectedParams);
+});
+
+// it('createQueues should return successful', async () => {
+//   jest.mock('../index.js');
+//   const mockCreateQueue = jest.fn();
+//   const serverlessOffline = new ServerlessOfflineSQS(serverless, {});
+//   serverlessOffline.setSqsClient();
+//   serverlessOffline.sqsClient.createQueue = mockCreateQueue;
+//   serverlessOffline.sqsClient.createQueue.promise = mockCreateQueue;
+//   mockCreateQueue.mockReturnValue(Promise.resolve('Done'));
+//   const queues = [serverless.service.resources.Resources['Queue1']];
+//   const returnValue = await serverlessOffline.createQueues(queues);
+//   expect(returnValue).toEqual('Done');
+// });
