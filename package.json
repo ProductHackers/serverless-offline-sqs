@@ -1,5 +1,5 @@
 {
-  "name": "serverless-offline-sqs",
+  "name": "@product-hackers/serverless-offline-sqs",
   "version": "0.9.0",
   "description": "Serverless plugin to develop locally SQS events with serverless-offline",
   "main": "index.js",
